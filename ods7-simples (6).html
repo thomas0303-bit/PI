@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Missão Energia — de onde vem a luz da sua casa?</title>
+
+<!-- ==========================================================
+     BLOCO 1 — ESTILO (CSS)
+     Tudo que define as cores, o tamanho das letras e o layout.
+     ========================================================== -->
+<style>
+/* Fontes do Google Fonts:
+   Bricolage Grotesque nos títulos e Nunito Sans no texto.
+   Sem internet, o site usa a fonte do sistema. */
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Nunito+Sans:wght@400;600;700&display=swap");
+
+/* Paleta "sol e rede elétrica", definida em um lugar só.
+   Para mudar o visual inteiro, basta mudar aqui. */
+:root {
+  --noite: #14213d;        /* azul bem escuro: cabeçalho e destaques */
+  --noite-clara: #1f3460;
+  --sol: #ffb627;          /* amarelo-laranja: cor da energia */
+  --sol-claro: #fff1d0;
+  --verde: #2a9d8f;        /* verde-água: renovável, acertos */
+  --verde-claro: #dcf2ee;
+  --vermelho: #d1495b;     /* erros e fontes poluentes */
+  --vermelho-claro: #fbe3e6;
+  --texto: #1d2433;
+  --cinza: #5d6577;
+  --fundo: #fbf7ef;        /* creme suave */
+  --borda: #ece4d4;
+  --sombra: 0 2px 0 var(--borda), 0 10px 30px rgba(20, 33, 61, .06);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Nunito Sans", system-ui, Arial, sans-serif;
+  color: var(--texto);
+  line-height: 1.6;
+  /* Fundo creme com pontinhos, lembrando uma placa de circuito */
+  background-color: var(--fundo);
+  background-image: radial-gradient(#e7dcc4 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+h1, h2, h3 { font-family: "Bricolage Grotesque", system-ui, sans-serif; }
+
+/* ---------- Cabeçalho e menu ---------- */
+/* Azul-noite com um "brilho de sol" no canto direito */
+header {
+  background:
+    radial-gradient(circle at 90% -40%, rgba(255, 182, 39, .45), transparent 45%),
+    var(--noite);
+  color: #fff;
+  padding: 22px 20px 18px;
+  position: sticky;   /* o menu fica preso no topo ao rolar */
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 6px 24px rgba(20, 33, 61, .25);
+}
+
+.titulo-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.titulo-topo h1 { font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -.5px; }
+.titulo-topo small { color: #aab6d3; font-size: 14px; }
+
+/* Caixinha que mostra o XP e o nível do jogador */
+.placar {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255, 182, 39, .5);
+  padding: 8px 18px;
+  border-radius: 99px;
+  font-size: 14px;
+  color: #dfe5f3;
+}
+.placar strong { color: var(--sol); font-size: 16px; }
+
+nav {
+  max-width: 1040px;
+  margin: 18px auto 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+nav button {
+  background: transparent;
+  color: #c9d2e8;
+  border: 0;
+  padding: 8px 16px;
+  border-radius: 99px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background .2s, color .2s;
+}
+
+nav button:hover { background: rgba(255,255,255,.08); color: #fff; }
+
+/* A classe "ativo" marca qual página está sendo exibida */
+nav button.ativo {
+  background: var(--sol);
+  color: var(--noite);
+  font-weight: 700;
+  box-shadow: 0 0 18px rgba(255, 182, 39, .45);   /* brilho */
+}
+
+/* ---------- Área do conteúdo ---------- */
+main { max-width: 1040px; margin: 44px auto; padding: 0 20px; }
+
+/* Cada "página" é uma section. Todas ficam escondidas,
+   menos a que tiver a classe "ativa". */
+section { display: none; }
+section.ativa { display: block; animation: aparecer .4s ease; }
+
+/* Animação simples: a página surge subindo um pouquinho */
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -.8px;
+  line-height: 1.15;
+  margin: 0 0 10px;
+  color: var(--noite);
+}
+
+/* Tracinho amarelo embaixo de cada título principal */
+h2::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 5px;
+  margin-top: 12px;
+  border-radius: 99px;
+  background: var(--sol);
+}
+
+.subtitulo { color: var(--cinza); font-size: 17px; margin: 0 0 30px; max-width: 62ch; }
+
+/* ---------- Grade de cartões ---------- */
+/* auto-fit faz os cartões se reorganizarem sozinhos no celular */
+.grade {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.cartao {
+  background: #fff;
+  border: 1px solid var(--borda);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: var(--sombra);
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+}
+
+/* Ao passar o mouse, o cartão sobe e a borda "acende" */
+.cartao:hover {
+  transform: translateY(-4px);
+  border-color: var(--sol);
+  box-shadow: 0 2px 0 var(--sol), 0 16px 34px rgba(20, 33, 61, .10);
+}
+
+.cartao h3 { margin: 0 0 8px; font-size: 19px; color: var(--noite); }
+.cartao p  { margin: 0; color: var(--cinza); font-size: 15px; }
+
+/* Etiqueta pequena usada nos cartões das fontes */
+.etiqueta {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 99px;
+  margin-top: 14px;
+  background: var(--verde-claro);
+  color: #1b6c62;
+}
+.etiqueta.suja { background: var(--vermelho-claro); color: #9c2f3d; }
+
+/* Título menor para separar blocos dentro da mesma página */
+h2.secundario { font-size: 24px; margin-top: 52px; margin-bottom: 20px; }
+h2.secundario::after { width: 36px; height: 4px; margin-top: 8px; }
+
+/* ---------- Botões ---------- */
+.botao {
+  background: var(--noite);
+  color: #fff;
+  border: 0;
+  padding: 12px 24px;
+  border-radius: 99px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 6px;
+  transition: background .2s, transform .2s;
+}
+
+.botao:hover { background: var(--noite-clara); transform: translateY(-1px); }
+.botao.amarelo { background: var(--sol); color: var(--noite); }
+
+/* ---------- Barra de progresso ---------- */
+.barra {
+  height: 14px;
+  background: #efe7d6;
+  border-radius: 99px;
+  overflow: hidden;
+  margin: 10px 0 28px;
+}
+
+.barra > span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--sol), #f77f00);
+  border-radius: 99px;
+  transition: width .5s;
+}
+
+/* ---------- Missões ---------- */
+.missao {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.missao .texto { flex: 1; }
+.missao h3 { margin-top: 0; }
+
+.missao button {
+  flex-shrink: 0;
+  background: #fff;
+  border: 2px solid var(--borda);
+  color: var(--cinza);
+  padding: 8px 16px;
+  border-radius: 99px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  transition: all .2s;
+}
+
+.missao button:hover { border-color: var(--verde); color: var(--verde); }
+
+/* Missão já concluída fica verde e não pode ser clicada de novo */
+.missao button.feita {
+  background: var(--verde);
+  border-color: var(--verde);
+  color: #fff;
+  cursor: default;
+  box-shadow: 0 0 0 5px var(--verde-claro);
+}
+
+/* ---------- Quiz ---------- */
+.alternativa {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--fundo);
+  border: 2px solid var(--borda);
+  padding: 13px 18px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--texto);
+  transition: border-color .2s, background .2s;
+}
+
+.alternativa:hover { border-color: var(--sol); background: #fff; }
+.alternativa.certa  { background: var(--verde-claro); border-color: var(--verde); }
+.alternativa.errada { background: var(--vermelho-claro); border-color: var(--vermelho); }
+
+/* ---------- Aviso flutuante (toast) ---------- */
+#aviso {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--noite);
+  color: var(--sol);
+  border: 1px solid rgba(255, 182, 39, .5);
+  padding: 12px 26px;
+  border-radius: 99px;
+  font-weight: 700;
+  box-shadow: 0 10px 30px rgba(20, 33, 61, .35);
+  display: none;
+}
+
+footer {
+  text-align: center;
+  color: #aab6d3;
+  background: var(--noite);
+  font-size: 14px;
+  padding: 28px 20px;
+  margin-top: 60px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ==========================================================
+     BLOCO 2 — CONTEÚDO (HTML)
+     São 4 páginas dentro do mesmo arquivo. O JavaScript
+     mostra uma e esconde as outras.
+     ========================================================== -->
+
+<header>
+  <div class="titulo-topo">
+    <div>
+      <h1>Missão Energia</h1>
+      <small>Descubra de onde vem a energia que você usa — e como usar melhor</small>
+    </div>
+    <div class="placar">
+      Nível <strong id="nivel">1</strong> · <strong id="xp">0</strong> XP
+    </div>
+  </div>
+
+  <!-- O atributo data-pagina liga cada botão à sua section -->
+  <nav>
+    <button class="ativo" data-pagina="inicio">Início</button>
+    <button data-pagina="fontes">Fontes de energia</button>
+    <button data-pagina="eficiencia">Energia em casa</button>
+    <button data-pagina="jogar">Missões e Quiz</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- PÁGINA 1: INÍCIO -->
+  <section id="inicio" class="ativa">
+    <h2>De onde vem a luz da sua casa?</h2>
+    <p class="subtitulo">
+      Quando você aperta o interruptor, a energia já percorreu um longo caminho
+      até chegar ali. Veja as quatro etapas dessa viagem.
+    </p>
+
+    <div class="grade">
+      <div class="cartao">
+        <h3>1. Geração</h3>
+        <p>Uma usina transforma outra forma de energia (água, sol, vento, calor) em eletricidade.</p>
+      </div>
+      <div class="cartao">
+        <h3>2. Transmissão</h3>
+        <p>Grandes torres e cabos levam a energia por centenas de quilômetros até as cidades.</p>
+      </div>
+      <div class="cartao">
+        <h3>3. Distribuição</h3>
+        <p>Subestações baixam a tensão e os postes da rua entregam a energia em cada bairro.</p>
+      </div>
+      <div class="cartao">
+        <h3>4. Consumo</h3>
+        <p>O relógio de luz mede quanto a casa usou, em kWh. É isso que aparece na conta.</p>
+      </div>
+    </div>
+
+    <h2 class="secundario">Você sabia?</h2>
+    <div class="grade">
+      <div class="cartao">
+        <h3>O Brasil é movido a água</h3>
+        <p>As hidrelétricas são a principal fonte de eletricidade do país.</p>
+      </div>
+      <div class="cartao">
+        <h3>O vilão da conta</h3>
+        <p>Em muitas casas brasileiras, o chuveiro elétrico é o aparelho que mais pesa na conta de luz.</p>
+      </div>
+      <div class="cartao">
+        <h3>Nem todos têm luz</h3>
+        <p>Ainda existem milhões de pessoas no mundo vivendo sem acesso à eletricidade.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA 2: FONTES DE ENERGIA -->
+  <section id="fontes">
+    <h2>Fontes de energia</h2>
+    <p class="subtitulo">Toda usina começa com uma fonte. Algumas se renovam na natureza, outras acabam.</p>
+
+    <div class="grade">
+      <div class="cartao">
+        <h3>Solar</h3>
+        <p>Painéis fotovoltaicos convertem a luz do sol diretamente em eletricidade.</p>
+        <span class="etiqueta">Renovável</span>
+      </div>
+      <div class="cartao">
+        <h3>Eólica</h3>
+        <p>A força do vento gira as turbinas, que acionam geradores elétricos.</p>
+        <span class="etiqueta">Renovável</span>
+      </div>
+      <div class="cartao">
+        <h3>Hidrelétrica</h3>
+        <p>A água em movimento gira turbinas. É a principal fonte elétrica do Brasil.</p>
+        <span class="etiqueta">Renovável</span>
+      </div>
+      <div class="cartao">
+        <h3>Biomassa</h3>
+        <p>Matéria orgânica, como o bagaço da cana, é usada para gerar energia.</p>
+        <span class="etiqueta">Renovável</span>
+      </div>
+      <div class="cartao">
+        <h3>Geotérmica</h3>
+        <p>Aproveita o calor do interior da Terra para produzir vapor e eletricidade.</p>
+        <span class="etiqueta">Renovável</span>
+      </div>
+      <div class="cartao">
+        <h3>Oceânica</h3>
+        <p>Usa o movimento das marés e das ondas. Ainda está em fase de expansão.</p>
+        <span class="etiqueta">Renovável</span>
+      </div>
+    </div>
+
+    <h2 class="secundario">E as que não se renovam?</h2>
+    <div class="grade">
+      <div class="cartao">
+        <h3>Petróleo</h3>
+        <p>Vira gasolina, diesel e óleo para usinas. Polui o ar e um dia vai acabar.</p>
+        <span class="etiqueta suja">Não renovável</span>
+      </div>
+      <div class="cartao">
+        <h3>Carvão mineral</h3>
+        <p>Queimado em usinas termelétricas. É uma das fontes que mais emitem CO₂.</p>
+        <span class="etiqueta suja">Não renovável</span>
+      </div>
+      <div class="cartao">
+        <h3>Gás natural</h3>
+        <p>Polui menos que o carvão, mas também é um combustível fóssil.</p>
+        <span class="etiqueta suja">Não renovável</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA 3: EFICIÊNCIA -->
+  <section id="eficiencia">
+    <h2>Energia dentro de casa</h2>
+    <p class="subtitulo">A energia mais limpa é a que não precisa ser gerada. Veja onde dá para economizar.</p>
+
+    <div class="grade">
+      <div class="cartao">
+        <h3>Iluminação</h3>
+        <p>Use lâmpadas LED e aproveite ao máximo a luz natural durante o dia.</p>
+      </div>
+      <div class="cartao">
+        <h3>Geladeira</h3>
+        <p>Mantenha a borracha da porta em bom estado e evite deixá-la aberta.</p>
+      </div>
+      <div class="cartao">
+        <h3>Chuveiro</h3>
+        <p>Banhos mais curtos economizam água e a energia usada para aquecê-la.</p>
+      </div>
+      <div class="cartao">
+        <h3>Aparelhos em espera</h3>
+        <p>Equipamentos em modo standby continuam consumindo energia da tomada.</p>
+      </div>
+      <div class="cartao">
+        <h3>Máquina de lavar</h3>
+        <p>Use a capacidade máxima da máquina em vez de fazer várias lavagens pequenas.</p>
+      </div>
+      <div class="cartao">
+        <h3>Conforto térmico</h3>
+        <p>Ventilação e sombreamento reduzem a necessidade de ar-condicionado.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PÁGINA 4: MISSÕES E QUIZ -->
+  <section id="jogar">
+    <h2>Missões</h2>
+    <p class="subtitulo">
+      Concluídas: <strong id="contaMissoes">0 de 5</strong>
+    </p>
+    <div class="barra"><span id="barraMissoes"></span></div>
+
+    <!-- data-xp guarda quantos pontos cada missão vale -->
+    <div class="grade" style="margin-bottom:40px">
+      <div class="cartao missao">
+        <div class="texto">
+          <h3>Caçador de desperdícios</h3>
+          <p>Encontre 3 desperdícios de energia na sua casa.</p>
+        </div>
+        <button data-xp="40">Concluir</button>
+      </div>
+      <div class="cartao missao">
+        <div class="texto">
+          <h3>Luz certa</h3>
+          <p>Troque uma lâmpada antiga por uma de LED.</p>
+        </div>
+        <button data-xp="50">Concluir</button>
+      </div>
+      <div class="cartao missao">
+        <div class="texto">
+          <h3>Banho consciente</h3>
+          <p>Reduza o tempo do seu banho por uma semana.</p>
+        </div>
+        <button data-xp="35">Concluir</button>
+      </div>
+      <div class="cartao missao">
+        <div class="texto">
+          <h3>Desafio da tomada</h3>
+          <p>Desligue da tomada os aparelhos que não estão em uso.</p>
+        </div>
+        <button data-xp="30">Concluir</button>
+      </div>
+      <div class="cartao missao">
+        <div class="texto">
+          <h3>Detetive da conta</h3>
+          <p>Pegue a conta de luz e descubra quantos kWh sua casa gastou no mês.</p>
+        </div>
+        <button data-xp="45">Concluir</button>
+      </div>
+    </div>
+
+    <h2>Quiz da energia</h2>
+    <p class="subtitulo">Cada resposta certa vale 20 XP.</p>
+    <!-- Esta caixa começa vazia: o JavaScript monta as perguntas aqui -->
+    <div id="quiz"></div>
+  </section>
+
+</main>
+
+<div id="aviso"></div>
+
+<footer>Trabalho escolar inspirado no ODS 7 — Energia Limpa e Acessível</footer>
+
+<!-- ==========================================================
+     BLOCO 3 — COMPORTAMENTO (JavaScript)
+     Dividido em 4 partes independentes.
+     ========================================================== -->
+<script>
+
+/* --- PARTE 1: pontuação do jogador ------------------------- */
+
+let xp = 0;
+
+// Soma pontos, recalcula o nível e mostra um aviso na tela.
+function ganharXP(pontos, mensagem) {
+  xp = xp + pontos;
+  const nivel = Math.floor(xp / 200) + 1;   // a cada 200 XP sobe um nível
+
+  document.getElementById("xp").textContent = xp;
+  document.getElementById("nivel").textContent = nivel;
+
+  mostrarAviso("+" + pontos + " XP — " + mensagem);
+}
+
+// Mostra a mensagem no rodapé e some sozinha depois de 2 segundos.
+function mostrarAviso(mensagem) {
+  const aviso = document.getElementById("aviso");
+  aviso.textContent = mensagem;
+  aviso.style.display = "block";
+  setTimeout(function () { aviso.style.display = "none"; }, 2000);
+}
+
+
+/* --- PARTE 2: troca de páginas ----------------------------- */
+
+// Para cada botão do menu, escondemos todas as sections e
+// mostramos apenas a que corresponde ao data-pagina do botão.
+document.querySelectorAll("nav button").forEach(function (botao) {
+  botao.onclick = function () {
+
+    document.querySelectorAll("nav button").forEach(function (b) {
+      b.classList.remove("ativo");
+    });
+    botao.classList.add("ativo");
+
+    document.querySelectorAll("main section").forEach(function (s) {
+      s.classList.remove("ativa");
+    });
+    document.getElementById(botao.dataset.pagina).classList.add("ativa");
+
+    window.scrollTo(0, 0);
+  };
+});
+
+
+/* --- PARTE 3: missões -------------------------------------- */
+
+let missoesFeitas = 0;
+const totalMissoes = document.querySelectorAll(".missao button").length;
+
+document.querySelectorAll(".missao button").forEach(function (botao) {
+  botao.onclick = function () {
+
+    if (botao.classList.contains("feita")) return;  // já concluída, ignora
+
+    botao.classList.add("feita");
+    botao.textContent = "Feito";
+    missoesFeitas++;
+
+    document.getElementById("contaMissoes").textContent =
+      missoesFeitas + " de " + totalMissoes;
+
+    document.getElementById("barraMissoes").style.width =
+      (missoesFeitas / totalMissoes * 100) + "%";
+
+    ganharXP(Number(botao.dataset.xp), "Missão concluída");
+  };
+});
+
+
+/* --- PARTE 4: quiz ----------------------------------------- */
+
+// As perguntas ficam nesta lista. "certa" é a posição da
+// resposta correta dentro de "opcoes" (contando a partir do 0).
+const perguntas = [
+  {
+    pergunta: "Qual é a principal fonte de eletricidade do Brasil?",
+    opcoes: ["Carvão mineral", "Hidrelétrica", "Energia nuclear"],
+    certa: 1
+  },
+  {
+    pergunta: "Qual destas fontes é renovável?",
+    opcoes: ["Petróleo", "Gás natural", "Energia solar"],
+    certa: 2
+  },
+  {
+    pergunta: "Qual unidade aparece na conta de luz para medir o consumo?",
+    opcoes: ["kWh (quilowatt-hora)", "Litros", "Quilômetros"],
+    certa: 0
+  },
+  {
+    pergunta: "Depois de gerada na usina, a energia passa primeiro por qual etapa?",
+    opcoes: ["Consumo", "Transmissão", "Distribuição"],
+    certa: 1
+  },
+  {
+    pergunta: "Um aparelho em modo standby (luzinha acesa):",
+    opcoes: ["Não gasta nada", "Continua gastando um pouco de energia", "Gera energia"],
+    certa: 1
+  },
+  {
+    pergunta: "A energia eólica aproveita principalmente:",
+    opcoes: ["O vento", "O calor do solo", "As marés"],
+    certa: 0
+  }
+];
+
+let indice = 0;   // qual pergunta está sendo exibida
+let acertos = 0;
+
+function mostrarPergunta() {
+  const caixa = document.getElementById("quiz");
+
+  // Se já passamos por todas as perguntas, mostra o resultado final
+  if (indice >= perguntas.length) {
+    caixa.innerHTML =
+      '<div class="cartao">' +
+        '<h3>Quiz concluído!</h3>' +
+        '<p>Você acertou ' + acertos + ' de ' + perguntas.length + ' perguntas.</p>' +
+        '<button class="botao amarelo" onclick="reiniciarQuiz()">Jogar de novo</button>' +
+      '</div>';
+    return;
+  }
+
+  const p = perguntas[indice];
+
+  // Monta o texto da pergunta
+  caixa.innerHTML =
+    '<div class="cartao">' +
+      '<p style="color:var(--cinza);margin:0">Pergunta ' +
+        (indice + 1) + ' de ' + perguntas.length + '</p>' +
+      '<h3>' + p.pergunta + '</h3>' +
+      '<div id="opcoes"></div>' +
+      '<p id="retorno"></p>' +
+    '</div>';
+
+  // Cria um botão para cada alternativa
+  p.opcoes.forEach(function (texto, i) {
+    const botao = document.createElement("button");
+    botao.className = "alternativa";
+    botao.textContent = texto;
+    botao.onclick = function () { responder(i); };
+    document.getElementById("opcoes").appendChild(botao);
+  });
+}
+
+function responder(escolha) {
+  const p = perguntas[indice];
+  const botoes = document.querySelectorAll(".alternativa");
+
+  // Pinta de verde a certa e de vermelho a errada, e trava os cliques
+  botoes.forEach(function (botao, i) {
+    botao.onclick = null;
+    if (i === p.certa) botao.classList.add("certa");
+    else if (i === escolha) botao.classList.add("errada");
+  });
+
+  if (escolha === p.certa) {
+    acertos++;
+    ganharXP(20, "Resposta certa");
+  }
+
+  // Cria o botão que avança para a próxima pergunta
+  const proxima = document.createElement("button");
+  proxima.className = "botao";
+  proxima.textContent = "Próxima pergunta";
+  proxima.onclick = function () { indice++; mostrarPergunta(); };
+  document.getElementById("retorno").appendChild(proxima);
+}
+
+function reiniciarQuiz() {
+  indice = 0;
+  acertos = 0;
+  mostrarPergunta();
+}
+
+mostrarPergunta();  // monta a primeira pergunta ao abrir a página
+
+</script>
+</body>
+</html>
